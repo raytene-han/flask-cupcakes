@@ -48,7 +48,7 @@ def create_cupcake():
     flavor = request.json["flavor"]
     size = request.json["size"]
     rating = request.json["rating"]
-    image = request.json["image"]
+    image = request.json.get("image", None)
 
     new_cupcake = Cupcake(flavor=flavor,
                           size=size,
@@ -64,7 +64,8 @@ def create_cupcake():
 
 @app.patch('/api/cupcakes/<int:cupcake_id>')
 def update_cupcake(cupcake_id):
-    """ Update cupcake based on data"""
+    """ Update cupcake based on data.
+    Return JSON {cupcake: {id, flavor, size, rating, image}}."""
 
     cupcake = Cupcake.query.get_or_404(cupcake_id)
     cupcake.flavor = request.json.get("flavor", cupcake.flavor)
@@ -80,7 +81,7 @@ def update_cupcake(cupcake_id):
 
 @app.delete('/api/cupcakes/<int:cupcake_id>')
 def delete_cupcake(cupcake_id):
-    """deletes cupcake by id"""
+    """deletes cupcake by id. Returns JSON {"deleted": cupcake_id}."""
 
     cupcake = Cupcake.query.get(cupcake_id)
     db.session.delete(cupcake)
