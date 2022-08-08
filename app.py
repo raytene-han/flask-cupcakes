@@ -40,21 +40,45 @@ def create_cupcake():
     """Create new cupcake & return it.
     Return JSON {cupcake: {id, flavor, size, rating, image}}."""
 
-    # flavor = request.json["flavor"]
-    # size = request.json["size"]
-    # rating = request.json["rating"]
-    # image = request.json["image"]
-    # TODO: list comp [flavor, size, rating, image] = request.json.values()
-    data = {key: value for key, value in request.json.items()}
-    new_cupcake = Cupcake(**data)
-    # new_cupcake = Cupcake(flavor=flavor,
-    #                       size=size,
-    #                       rating=rating,
-    #                       image=image)
+    flavor = request.json["flavor"]
+    size = request.json["size"]
+    rating = request.json["rating"]
+    image = request.json["image"]
 
+    new_cupcake = Cupcake(flavor=flavor,
+                          size=size,
+                          rating=rating,
+                          image=image)
     db.session.add(new_cupcake)
     db.session.commit()
 
     serialized = new_cupcake.serialize()
 
     return (jsonify(cupcake=serialized), 201)
+
+
+@app.patch('/api/cupcakes/<int:cupcake_id>')
+def update_cupcake(cupcake_id):
+    """ Update cupcake based on data"""
+
+    cupcake = Cupcake.query.get_or_404(cupcake_id)
+    cupcake.flavor = request.json.get("flavor", cupcake.flavor)
+    cupcake.size = request.json.get("size", cupcake.size)
+    cupcake.rating = request.json.get("rating", cupcake.rating)
+    cupcake.image = request.json.get("image", cupcake.image)
+
+    db.session.commit()
+
+    serialized = cupcake.serialize()
+    return jsonify(cupcake=serialized)
+
+
+@app.delete('/api/cupcakes/<int:cupcake_id>')
+def delete_cupcake(cupcake_id):
+    """deletes cupcake by id"""
+
+    cupcake = Cupcake.query.get(cupcake_id)
+    db.session.delete(cupcake)
+    db.session.commit()
+
+    return jsonify({"deleted": cupcake_id})
