@@ -32,6 +32,7 @@ function showCupcakes(cupcakes) {
   - Accepts 1 cupcake data object
   - 'returns list item */
 function showSingleCupcake(cupcake) {
+  // TODO: make one string
   const $newItem = $("<li>", { id: `cupcake-${cupcake.id}` });
   const $img = $(`<img src=${cupcake.image} width="200px">`);
   const $flavor = $(`<p>${cupcake.flavor}</p>`);
@@ -58,7 +59,7 @@ async function addCupcake() {
   const response = await axios({
     method: "POST",
     url: BASE_URL,
-    data: data,
+    data
   });
   const cupcake = response.data.cupcake;
   return cupcake;
