@@ -14,9 +14,18 @@ async function initApp() {
 
 
 /** Query database from the API and return an array of cupcakes. */
-async function initCupcakeData() {
-  const response = await axios.get(BASE_URL);
+async function initCupcakeData(term) {
+  let response;
 
+  if (term) {
+    response = await axios({
+      method: "GET",
+      url: BASE_URL,
+      params: {term}
+    });
+  } else {
+    response = await axios.get(BASE_URL);
+  }
   const cupcakes = response.data.cupcakes;
   return cupcakes;
 }
@@ -74,7 +83,17 @@ async function handleAddCupcake(evt) {
 
 }
 
+async function handleSearchCupcake(evt) {
+  evt.preventDefault();
+  const term = $('#searchterm').val()
+  const cupcakes = await initCupcakeData(term);
+  $('ul').empty();
+  showCupcakes(cupcakes);
+
+}
+
 // Add Form event listener
-$('form').on('submit', handleAddCupcake);
+$('#addform').on('submit', handleAddCupcake);
+$('#searchform').on('submit', handleSearchCupcake);
 
 initApp();

@@ -22,7 +22,14 @@ def list_all_cupcakes():
     """Lists all cupcakes in database.
     Return JSON {cupcakes: [{id, flavor, size, rating, image}, ...]}."""
 
-    cupcakes = Cupcake.query.all()
+    if request.args:
+        term = request.args['term']
+        cupcakes = Cupcake.query.filter(
+                        Cupcake.flavor.ilike(f'%{term}%'))
+
+    else:
+        cupcakes = Cupcake.query.all()
+
     serialized = [cupcake.serialize() for cupcake in cupcakes]
 
     return jsonify(cupcakes=serialized)
